@@ -47,6 +47,9 @@ if __name__ == '__main__':
             
         df_list.columns = ['ts','uid','lon','lat','speed']
         df_list['user_progressive'] = 0  
+        df_list['lon'] = df_list['lon']/ 10**6
+        df_list['lat'] = df_list['lat']/ 10**6
+        
         cb.srtm_assign(df_list)
         df = df_list.to_numpy()
         for row in df:                
