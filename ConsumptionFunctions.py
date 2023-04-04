@@ -1101,26 +1101,29 @@ def MapMatching(df_trip_for_meili):
     return r
 
 
-   
-
-
-
-
 def weather_assign(df):
     start_date = pd.to_datetime(df.ts.min())
     start_date = start_date - pd.Timedelta(1, unit="d")
     end_date = pd.to_datetime(df.ts.max())
     dif = (end_date-start_date).days
+    weather_found = true
+    df_we = []
     for i in range(len(df)):        
         lat = df.lat[i]
         lon = df.lon[i]        
         df_w = get_weather_data(start_date,end_date,lat,lon)
         if len(df_w) >= dif:
             df['time'] = pd.to_datetime(df['ts'].dt.date)
-            df_weather = pd.merge(df, df_w, on='time')
+            df_we = pd.merge(df, df_w, on='time')
             break  
-        
-    return df_weather
+        else:
+            weather_found = false
+           
+    if !weather_found:
+        df_we = df.copy()
+        df_we['temp']=16
+    
+    return df_we
 
 
 def get_weather_data(start_date,end_date,lat,lon):
@@ -1532,39 +1535,5 @@ if __name__ == '__main__':
     #the minimum number of points in a trajectory
     minpoints = 4 # number of points in the trayectorie
     
-    """
-    data = pd.read_csv('datasets/lucca_small_10per.csv',dtype={"uid": np.int64 ,"lon": np.float32,"lat": np.float32,"speed": np.float16},parse_dates=["ts"],usecols=["uid","lon","lat","speed","ts"])
-    df = pd.DataFrame(data)   
-    t0 = time.time()
     
     
-    
-    #df_f = func(df,temporal_thr,spatial_thr,minpoints)
-    
-    srtm_assign(df)
-    dj = pre_process(df,temporal_thr,spatial_thr,minpoints)
-    df_inter = interpolation_traj(dj)
-    
-    conditions = [((df_inter['ts_dif'] > 0) & (df_inter['distance'] > 0)) | (df_inter['PtType'] == 'Interpolated')]              
-    choices = [(df_inter['distance']/df_inter['ts_dif'])]
-    df_inter['speed']= np.select(conditions,choices,df_inter['speed'])  
-    
-    df_inter = assign_elevation(df_inter)
-    df_inter = calculate_slope(df_inter)
-    df_inter = weather_assign(df_inter)    
-    #df_inter = calculate_consumption_new(df_inter)
-    df_inter['emob_con'] = 2
-    
-    df_inter = time_difference(df_inter,temporal_thr)
-    df_inter = calculate_consumption_java(df_inter)    
-    lst_inter = df_inter[df_inter['distance'] == 0.0].index.tolist()
-    result = calulation_consumption(lst_inter,df_inter)
-    df_final_inter = pd.DataFrame(result)
-    df_final_inter.columns =['uid','start_time','end_time','distance','consume_new','consume_java']
-    df_final_inter.to_csv('traj_linear_interpolation_10_7.csv',sep=',', encoding='utf-8',index=False) 
-    
-    TotalTime = time.time() - t0 
-    print("Finilized in time:",TotalTime)
-    
-    
-    """
