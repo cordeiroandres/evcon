@@ -43,7 +43,8 @@ if __name__ == '__main__':
                            usecols=["ID_ANONYMOUS","DAY","HH24","LONGITUDE","LATITUDE","SPEED"])
         df_list = pd.DataFrame(data)
         df_list.columns = ['ts','uid','lon','lat','speed']
-        df_list['user_progressive'] = 0          
+        df_list['user_progressive'] = 0  
+        cb.srtm_assign(df_list)
         df = df_list.to_numpy()
         for row in df:                
             next_p = row        
