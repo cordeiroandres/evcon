@@ -42,6 +42,9 @@ if __name__ == '__main__':
                            parse_dates=[["DAY","HH24"]],
                            usecols=["ID_ANONYMOUS","DAY","HH24","LONGITUDE","LATITUDE","SPEED"])
         df_list = pd.DataFrame(data)
+        if len(df_list) == 0:
+            continue
+            
         df_list.columns = ['ts','uid','lon','lat','speed']
         df_list['user_progressive'] = 0  
         cb.srtm_assign(df_list)
