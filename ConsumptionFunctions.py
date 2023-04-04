@@ -1106,7 +1106,7 @@ def weather_assign(df):
     start_date = start_date - pd.Timedelta(1, unit="d")
     end_date = pd.to_datetime(df.ts.max())
     dif = (end_date-start_date).days
-    weather_found = true
+    weather_found = 1
     df_we = []
     for i in range(len(df)):        
         lat = df.lat[i]
@@ -1117,9 +1117,9 @@ def weather_assign(df):
             df_we = pd.merge(df, df_w, on='time')
             break  
         else:
-            weather_found = false
+            weather_found = 0
            
-    if !weather_found:
+    if weather_found==0:
         df_we = df.copy()
         df_we['temp']=16
     
