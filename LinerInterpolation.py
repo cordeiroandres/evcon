@@ -11,6 +11,7 @@ import glob
 import os
 import rasterio
 from pathlib import Path
+import time
 
 if __name__ == '__main__':
     #the maximum period of time (in seconds) between two consecutive points, otherwise the trajectory will be cut and another one will start
@@ -42,7 +43,7 @@ if __name__ == '__main__':
     first_iteration = True  
     i = 1 
     
-    
+    t0 = time.time()
     for dt in list_csv:        
         data = pd.read_csv(dt,dtype={"ID_ANONYMOUS": np.int64 ,"LONGITUDE": np.float32,"LATITUDE": np.float32,"SPEED": np.float16},
                            parse_dates=[["DAY","HH24"]],
@@ -98,7 +99,7 @@ if __name__ == '__main__':
                         #dfa = cb.consumption_lin(df_traj)
                         results.append(dfa)
                         
-                        with open('results442023.txt', 'w') as f:
+                        with open('results.txt', 'a') as f:
                             for line in results:
                                 f.write(f"{line}\n")
                         f.close()
@@ -123,4 +124,11 @@ if __name__ == '__main__':
                     next_p[5] = i
                     p = next_p                
                     traj.append(p)  
+    
+    t=time.time()-t0
+    with open('time.txt', 'a') as f:
+        for line in results:
+            f.write(f"{t}\n time total")
+        f.close()
+                        
         
