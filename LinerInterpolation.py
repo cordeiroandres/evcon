@@ -76,8 +76,8 @@ if __name__ == '__main__':
                         
                         col = ['ts','uid','lon','lat','speed','user_progressive']
                         df_traj = pd.DataFrame(traj, columns=col)                                                             
-                        #dfa = cb.consumption_traj(df_traj)
-                        dfa = cb.consumption_lin(df_traj)
+                        dfa = cb.consumption_traj(df_traj)
+                        #dfa = cb.consumption_lin(df_traj)
                         results.append(dfa)
                         
                         with open('results442023.txt', 'w') as f:
