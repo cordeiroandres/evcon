@@ -1455,7 +1455,7 @@ def consumption_traj(dfa):
 
     df_res = pd.concat(final, ignore_index=True)     
     df_res = df_res.drop_duplicates(subset=['lat', 'lon'], keep='first',ignore_index=True)
-
+    srtm_assign(df_res)
     df_res = calculate_acceleration(df_res)
     df_res = assign_elevation(df_res)
     df_res = calculate_slope(df_res)
