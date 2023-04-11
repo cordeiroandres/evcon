@@ -157,8 +157,7 @@ AIR_SPECIFIC_HEAT = {-50: 1002.6145045340269,
 
 
 PATH = os.getcwd()
-#FOLDER_DIR = 'tmp44'
-FOLDER_DIR = 'tmp_d3'
+FOLDER_DIR = 'srtm_files'
 URL = "https://srtm.csi.cgiar.org/wp-content/uploads/files/srtm_5x5/TIFF/srtm_{:s}.zip"
 TILES_DIR = os.path.join(PATH, FOLDER_DIR)
 MOSAIC = 'Mosaic.tif'  
