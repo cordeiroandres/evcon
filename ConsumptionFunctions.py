@@ -1411,7 +1411,8 @@ def MapMatching_seq(df):
     osrm_call = MapMatching_OSRM(df.lat[0],df.lon[0],df.lat[1],df.lon[1])
     if osrm_call.status_code == 200: 
         geometry =  osrm_call.json()['routes'][0]['geometry']
-        waypoints = pc.PolylineCodec().decode(geometry)        
+        #waypoints = pc.PolylineCodec().decode(geometry) 
+        waypoints = pc.decode(geometry)
         nodes = osrm_call.json()['routes'][0]['legs'][0]['annotation']['nodes']
         speed = osrm_call.json()['routes'][0]['legs'][0]['annotation']['speed']
         time = osrm_call.json()['routes'][0]['legs'][0]['annotation']['duration']
