@@ -26,6 +26,10 @@ if __name__ == '__main__':
     list_csv = glob.glob(files)
     list_csv.sort()
     
+    PATH = os.getcwd()    
+    FOLDER_DIR = 'srtm_files'
+    TILES_DIR = os.path.join(PATH, FOLDER_DIR)
+    MOSAIC = 'Mosaic.tif'
     
     df_traj = []
     
@@ -51,6 +55,18 @@ if __name__ == '__main__':
         df_list['lat'] = df_list['lat']/ 10**6
         
         cb.srtm_assign(df_list)
+        #GLOBAL VARIABLES
+        tile = os.path.join(TILES_DIR , MOSAIC)
+        print("tile=",tile)
+        dem_file = Path(tile)
+        print("dem=",dem_file)
+
+        #checks if the file exist
+        if dem_file.is_file():
+            SRC = rasterio.open(tile)
+            DEM_DATA = SRC.read(1)
+            print("SRC")        
+        
         df = df_list.to_numpy()
         for row in df:                
             next_p = row        
