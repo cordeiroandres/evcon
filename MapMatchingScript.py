@@ -52,6 +52,7 @@ if __name__ == '__main__':
         with open('list_dt.txt', 'a') as f:                   
              f.write(f"{dt}\n")
         f.close()
+        print("dt=",dt)
         
         if len(df_list) == 0:
             continue
@@ -133,7 +134,7 @@ if __name__ == '__main__':
         
     t=time.time()-t0
     with open('time.txt', 'w') as f: 
-        f.write(f"{dt} total time:")
+        f.write("total time:")
         f.write(f"{t}\n ")
     f.close()
     
