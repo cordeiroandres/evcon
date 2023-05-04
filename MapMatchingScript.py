@@ -43,7 +43,8 @@ if __name__ == '__main__':
     i = 1 
     
     t0 = time.time()
-    
+    print(len(list_csv))
+    print(list_csv[0])
     for dt in list_csv:        
         data = pd.read_csv(dt,dtype={"ID_ANONYMOUS": np.int64 ,"LONGITUDE": np.float32,"LATITUDE": np.float32,"SPEED": np.float16},
                            parse_dates=[["DAY","HH24"]],
