@@ -45,7 +45,10 @@ if __name__ == '__main__':
     t0 = time.time()
     print(len(list_csv))
     print(list_csv[0])
-    for dt in list_csv:        
+    c=0
+    for dt in list_csv:   
+        if c==3:
+            break
         data = pd.read_csv(dt,dtype={"ID_ANONYMOUS": np.int64 ,"LONGITUDE": np.float32,"LATITUDE": np.float32,"SPEED": np.float16},
                            parse_dates=[["DAY","HH24"]],
                            usecols=["ID_ANONYMOUS","DAY","HH24","LONGITUDE","LATITUDE","SPEED"])
@@ -75,7 +78,8 @@ if __name__ == '__main__':
 
         
         df = df_list.to_numpy()
-        for row in df:                
+        for row in df:   
+            c+=1
             next_p = row        
             if first_iteration:
                 uid = row[1]            
@@ -108,8 +112,9 @@ if __name__ == '__main__':
                             for line in results:
                                 f.write(f"{line}\n")
                         f.close()
-                        
-                        break
+                        with open('list_trajs.txt', 'a') as f:
+                            f.write(df_traj.to_csv())
+                        f.close()                                                
                         
                         traj=[]                                         
                         uid = traj_new[-1][1]                     
