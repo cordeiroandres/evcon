@@ -99,13 +99,15 @@ if __name__ == '__main__':
                         df_traj = pd.DataFrame(traj, columns=col)                                                             
                         #dfa = cb.consumption_traj(df_traj)
                         #dfa = cb.consumption_lin(df_traj)
-                        dfa=[uid,df_traj.ts[0],df_traj.ts[len(df_traj)-1], len(df_traj) ]
+                        dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
                         results.append(dfa)
                         
                         with open('mapmat.txt', 'a') as f:
                             for line in results:
                                 f.write(f"{line}\n")
                         f.close()
+                        
+                        break
                         
                         traj=[]                                         
                         uid = traj_new[-1][1]                     
@@ -130,8 +132,9 @@ if __name__ == '__main__':
         
         
     t=time.time()-t0
-    with open('time.txt', 'w') as f:                   
-         f.write(f"{t} total time\n ")
+    with open('time.txt', 'w') as f: 
+        f.write(f"{dt} total time:")
+        f.write(f"{t}\n ")
     f.close()
     
         
