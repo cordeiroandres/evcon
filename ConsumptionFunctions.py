@@ -1,5 +1,3 @@
-#import modin.pandas as pd
-#import numexpr as ne
 import pandas as pd
 import numpy as np
 import time
@@ -17,7 +15,7 @@ from functools import lru_cache
 from pathlib import Path
 from numba import njit
 import meteostat as mt
-
+import json
 from shapely.geometry.linestring import LineString
 from shapely.geometry import Point
 
@@ -1006,11 +1004,11 @@ def distance_difference(df,IsRecontruct=False):
     prev_lat = df['lat'].shift(1).fillna(0)
     prev_lon = df['lon'].shift(1).fillna(0)
     vec_spherical_dist = np.vectorize(spherical_distance, otypes=[float] )
-    conditions = [(df['ts_dif'] > 0)]    
     
     if IsRecontruct:
         conditions = [(prev_lat > 0) & (prev_lon > 0)]  
-            
+    else:
+        conditions = [(df['ts_dif'] > 0)]        
     choices = [vec_spherical_dist(prev_lat,prev_lon,df['lat'],df['lon'])]
     df['distance']= np.select(conditions,choices,default=0)    
     return df    
@@ -1308,8 +1306,8 @@ def distance_dif(df):
 
 def time_calculation(df):
     #Calculates time for every point    
-    conditions = [((df['PtOrigin']==False) & (df['speed_med'] > 0))] 
-    choices = [(df['distance']/df['speed_med'])]
+    conditions = [(df['speed'] > 0)] 
+    choices = [(df['distance']/df['speed'])]
     df['ts_dif']= np.select(conditions,choices,default=0) 
     return df
 
@@ -1524,8 +1522,104 @@ def func(df,temporal_thr,spatial_thr,minpoints):
     df_final_inter = pd.DataFrame(result)
     df_final_inter.columns =['uid','start_time','end_time','distance','consume_new','consume_java']
     return df_final_inter    
-    
 
+def MapMatching_Valhalla(df):
+    df_trip_for_meili = df[['lon', 'lat', 'ts']].copy()
+    df_trip_for_meili.columns = ['lon', 'lat', 'time']
+    # Preparing the request to Valhalla's Meili
+    meili_coordinates = df_trip_for_meili.to_json(orient='records')
+    meili_head = '{"shape":'
+    meili_tail = """, "shape_match":"map_snap", "costing":"auto","verbose":true,
+    "filters":{"attributes":["shape","matched.point","matched.type","matched.lat","matched.lon", 
+    "matched.edge_index","node.elapsed_time",
+    "edge.way_id","edge.speed","edge.names","edge.length",
+    "edge.begin_shape_index","edge.end_shape_index","edge.internal_intersection"],"action":"include"},
+    "format":"osrm"}"""
+    meili_request_body = meili_head + meili_coordinates + meili_tail
+    # Sending a request to Valhalla's Meili
+    url = "http://localhost:8002/trace_attributes"
+    headers = {'Content-type': 'application/json'}
+    data = str(meili_request_body)      
+    r = requests.post(url, data=data, headers=headers)    
+    return r
+
+def MapMatching_traj(df):
+    r  = MapMatching_Valhalla(df) 
+    
+    if r.status_code == 200:  
+        response_text = json.loads(r.text)
+        #Converts to dataframe the matched points from the map matching
+        search_1 = response_text.get('matched_points')  
+        edges = response_text.get('edges') 
+        df_mat_pts = pd.json_normalize(data=search_1) 
+        
+        df_edges = pd.json_normalize(data=edges) 
+        df_edges['length'] = df_edges['length']*1000
+        
+        polyline6 = response_text.get('shape')
+        MapMatchingRoute = decode(polyline6)
+        index = ['lon','lat']
+        df_mpr = pd.DataFrame(MapMatchingRoute, columns=index) 
+            
+        df_edges['diff'] = df_edges['end_shape_index'] - df_edges['begin_shape_index']
+        grouped_way_id = df_edges.groupby('way_id',sort=False).agg({'diff': 'sum','speed':'sum'}).reset_index()
+        # Count the occurrences of each 'way_id'
+        way_id_counts = df_edges.groupby('way_id',sort=False).size().reset_index()
+        way_id_counts = way_id_counts.rename(columns={0: 'Cnt'})
+        grouped_way_id['count'] = way_id_counts['Cnt']
+        grouped_way_id['spd_avg'] = grouped_way_id['speed'] /grouped_way_id['count'] 
+        
+        list_way_id=[]
+        list_speed=[]
+        
+        list_way_id.append(grouped_way_id.way_id[0])
+        list_speed.append(grouped_way_id.spd_avg[0])
+        
+        for row in grouped_way_id.itertuples():
+            l=row.diff        
+            for i in range(l):
+                list_way_id.append(row.way_id) 
+                list_speed.append(row.spd_avg) 
+        
+        df.rename(columns = {'lon':'lon_old', 'lat':'lat_old'}, inplace = True)        
+        df_pts = pd.merge(df, df_mat_pts, left_index=True, right_index=True)
+        
+        df_mpr['way_id']=list_way_id
+        df_mpr['speed']=list_speed
+        df_mpr['speed']=df_mpr['speed']/3.6
+        df_mpr['uid'] =  df_pts.uid[0]
+        df_mpr['user_progressive'] = df_pts.user_progressive[0]
+        df_mpr['ts'] = df_pts.ts[0]
+        df_mpr['type'] = 'interpolated'
+        df_mpr.at[0,'speed'] = df_pts.speed[0]
+        df_mpr.at[0,'type'] = 'matched'
+        df_mpr.at[len(df_mpr)-1,'type'] = 'matched'
+        df_mpr.at[len(df_mpr)-1,'ts'] = df_pts.ts[len(df_pts)-1]
+        df_pts = df_pts.dropna().reset_index()
+        lst_edge = df_pts.edge_index
+        
+        for i in range(1, len(lst_edge)-1):
+            f = lst_edge[i]    
+            c = df_edges.end_shape_index[f]-1    
+            df_mpr.loc[c, 'type'] = 'matched' 
+            df_mpr.loc[c, 'ts'] = df_pts.ts[i]
+            df_mpr.loc[c, 'speed'] = df_pts.speed[i]
+        
+        df_mpr = distance_difference(df_mpr,True)    
+        df_mpr = time_calculation(df_mpr)   
+        df_mpr = calculate_acceleration(df_mpr)        
+        df_mpr = assign_elevation(df_mpr)
+        df_mpr = calculate_slope(df_mpr)
+        df_mpr = weather_assign(df_mpr) 
+
+        df_mpr = calculate_consumption_new(df_mpr)
+    else:
+        index = ['lon','lat']
+        df_mpr = pd.DataFrame(columns=index) 
+        
+    
+    return df_mpr
+        
                
 if __name__ == '__main__':
                 
