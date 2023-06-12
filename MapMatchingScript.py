@@ -36,6 +36,7 @@ if __name__ == '__main__':
     df_traj = []
     
     results = list()    
+    wayids = list() 
     
     traj_new = list()    
     traj = list()
@@ -103,18 +104,32 @@ if __name__ == '__main__':
                         
                         col = ['ts','uid','lon','lat','speed','user_progressive']
                         df_traj = pd.DataFrame(traj, columns=col)                                                             
-                        #dfa = cb.consumption_traj(df_traj)
-                        #dfa = cb.consumption_lin(df_traj)
-                        dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
-                        results.append(dfa)
+                        #dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
+                        dfa = cb.MapMatching_traj(df_traj)
+                        dist = dfa['distance'].sum()/1000
+                        con = dfa['emob_con'].sum()+10
+                        dfj=[uid,df_traj.ts[0],df_traj.ts[len(df_traj)-1],dist,con ]
+                        results.append(dfj)                        
                         
-                        with open('mapmat.txt', 'a') as f:
+                        with open('consumption_day.txt', 'a') as f:
                             for line in results:
                                 f.write(f"{line}\n")
                         f.close()
-                        with open('list_trajs.txt', 'a') as f:
-                            f.write(df_traj.to_csv())
-                        f.close()                                                
+                        
+                        group_wayid = dfa.groupby('way_id',sort=False).agg({'emob_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()                        
+                        group_wayid['ts']=df_traj.ts[0]
+                        group_wayid['distance'] = group_wayid['distance']/1000
+                                                                        
+                        wayids.append(group_wayid)
+                        
+                        with open('consumption_wayid.txt', 'a') as f:
+                            for line in wayids:
+                                f.write(f"{line}\n")
+                        f.close()
+                        
+                        #with open('consumption_wayid.txt', 'a') as f:
+                         #   f.write(df_traj.to_csv())
+                        #f.close()                                                
                         
                         traj=[]                                         
                         uid = traj_new[-1][1]                     
