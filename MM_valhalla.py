@@ -27,18 +27,16 @@ for i in range(len(lst_inter)-1):
         uid = djr.uid[0]
         dfj=[uid,djr.ts[0],djr.ts[len(djr)-1],dist,con ]
         results.append(dfj)
+        wayids.append(group_wayid)                     
+        with open('lst_wayid.txt', 'a') as f:
+            for line in wayids:
+                f.write(f"{line}\n")
+        f.close()
 
     with open('consumption_day.txt', 'a') as f:
         for line in results:
             f.write(f"{line}\n")
     f.close()
-    
-    wayids.append(group_wayid)                     
-    with open('lst_wayid.txt', 'a') as f:
-        for line in wayids:
-            f.write(f"{line}\n")
-    f.close()
-
 
 lst_wi = pd.concat(wayids, ignore_index=True)     
 
