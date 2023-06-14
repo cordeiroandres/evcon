@@ -1531,10 +1531,8 @@ def MapMatching_Valhalla(df):
     meili_head = '{"shape":'
     meili_tail = """, "shape_match":"map_snap", "costing":"auto","verbose":true,
     "filters":{"attributes":["shape","matched.point","matched.type","matched.lat","matched.lon", 
-    "matched.edge_index","node.elapsed_time",
-    "edge.way_id","edge.speed","edge.names","edge.length",
-    "edge.begin_shape_index","edge.end_shape_index","edge.internal_intersection"],"action":"include"},
-    "format":"osrm"}"""
+    "matched.edge_index","node.elapsed_time","edge.way_id","edge.speed","edge.names","edge.length",
+    "edge.begin_shape_index","edge.end_shape_index"],"action":"include"},"format":"osrm"}"""
     meili_request_body = meili_head + meili_coordinates + meili_tail
     # Sending a request to Valhalla's Meili
     url = "http://localhost:8002/trace_attributes"
