@@ -1545,6 +1545,7 @@ def MapMatching_Valhalla(df):
 
 def MapMatching_traj(df):
     r  = MapMatching_Valhalla(df) 
+    print(r)
     
     if r.status_code == 200:  
         response_text = json.loads(r.text)
