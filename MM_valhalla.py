@@ -10,6 +10,8 @@ df1 = pd.DataFrame(data)
 
 dj = cb.pre_process(df1,1200,50,4)
 
+srtm_assign(dj)
+
 lst_inter = dj[dj['distance'] == 0.0].index.tolist()
 
 results = list()    
