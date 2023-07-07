@@ -954,7 +954,8 @@ def JavaBatteryConsumption (timeGap, speed, accel, alpha):
         eBat = Pbat * timeGap * BATTERY_CHARGE_EFF
     
     # Calcolo DeltaSoC
-    kWh2Ws = 3600*1e3
+    #kWh2Ws = 3600*1e3
+    kWh2Ws = 36000
     deltaSoC = eBat/(EBATCAP*kWh2Ws)  
     #deltaSoC = eBat/(kWh2Ws)  
     
@@ -1639,9 +1640,9 @@ def MapMatching_traj(df):
         df_mpr = calculate_acceleration(df_mpr)        
         df_mpr = assign_elevation(df_mpr)
         df_mpr = calculate_slope(df_mpr)
-        df_mpr = weather_assign(df_mpr) 
-
-        df_mpr = calculate_consumption_new(df_mpr)
+        #df_mpr = weather_assign(df_mpr) 
+        #df_mpr = calculate_consumption_new(df_mpr)
+        df_mpr = calculate_consumption_java(df_mpr)
     else:
         index = ['lon','lat']
         df_mpr = pd.DataFrame(columns=index) 
