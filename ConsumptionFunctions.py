@@ -1573,9 +1573,7 @@ def decode(encoded):
 
 
 def MapMatching_traj(df):
-    r  = MapMatching_Valhalla(df) 
-    print(r)
-    
+    r  = MapMatching_Valhalla(df)         
     if r.status_code == 200:  
         response_text = json.loads(r.text)
         #Converts to dataframe the matched points from the map matching
