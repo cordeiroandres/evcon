@@ -14,12 +14,15 @@ lst_inter = dj[dj['distance'] == 0.0].index.tolist()
 
 results = list()    
 wayids = [] 
-for i in range(len(lst_inter)-1):    
+c=0
+for i in range(len(lst_inter)-1):  
+    if c==10:
+        break
     df=dj.iloc[lst_inter[i]:lst_inter[i+1]].reset_index(drop=True)    
-    djr=cb.MapMatching_traj(df)
+    djr=cb.MapMatching_traj(df)    
     if len(djr) > 0:
         dist = djr['distance'].sum()/1000
-        con = djr['emob_con'].sum()+10
+        con = djr['emob_con'].sum()
         group_wayid = djr.groupby('way_id',sort=False).agg({'emob_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()
         ts=djr.ts[0]
         group_wayid['ts']=ts
@@ -27,7 +30,8 @@ for i in range(len(lst_inter)-1):
         uid = djr.uid[0]
         dfj=[uid,djr.ts[0],djr.ts[len(djr)-1],dist,con ]
         results.append(dfj)
-        wayids.append(group_wayid)                     
+        wayids.append(group_wayid) 
+        c+=1
         with open('lst_wayid.txt', 'a') as f:
             for line in wayids:
                 f.write(f"{line}\n")
