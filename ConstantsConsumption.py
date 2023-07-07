@@ -210,7 +210,7 @@ A = 2.27
 # Coefficiente di resistenza aerodinamica
 CD = 0.29
 # Capacità della batteria
-EBATCAP = 24
+EBATCAP = 36
 # Regeneration ratio (G = 0.35 in ECO MODE)
 REGEN_RATIO = 0.35
 
