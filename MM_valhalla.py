@@ -24,8 +24,8 @@ for i in range(len(lst_inter)-1):
     djr=cb.MapMatching_traj(df)    
     if len(djr) > 0:
         dist = djr['distance'].sum()/1000
-        con = djr['emob_con'].sum()
-        group_wayid = djr.groupby('way_id',sort=False).agg({'emob_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()
+        con = djr['j_con'].sum()
+        group_wayid = djr.groupby('way_id',sort=False).agg({'j_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()
         ts=djr.ts[0]
         group_wayid['ts']=ts
         group_wayid['distance'] = group_wayid['distance']/1000    
@@ -47,3 +47,7 @@ for i in range(len(lst_inter)-1):
 lst_wi = pd.concat(wayids, ignore_index=True)     
 
 lst_wi.to_csv('lst_way_ids.csv', index=False)
+
+df_results = pd.DataFrame(results)
+df_results.to_csv('consumption_day.csv', index=False)
+
