@@ -19,10 +19,8 @@ if __name__ == '__main__':
     spatial_thr = 50 # meters    
     #the minimum number of points in a trajectory
     minpoints = 4 # number of points in the trayectorie
-    
-    #search_criteria = "*.csv"
-    search_criteria = "*.csv.gz"
-    #TILES_DIR = "C:\\Users\\deiro\\Documents\\Thesis\\datasets\\data"
+        
+    search_criteria = "*.csv.gz"    
     TILES_DIR = '/home/mirco/octo_gps/Emilia/'
     files = os.path.join(TILES_DIR, search_criteria)
     list_csv = glob.glob(files)
