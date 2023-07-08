@@ -40,7 +40,7 @@ if __name__ == '__main__':
     c=0
     for i in range(len(list_csv)):
     #for dt in list_csv:   
-        if c==3:
+        if c==2:
             break
         data = pd.read_csv(list_csv[i],dtype={"ID_ANONYMOUS": np.int64 ,"LONGITUDE": np.float32,"LATITUDE": np.float32,"SPEED": np.float16},
                            parse_dates=[["DAY","HH24"]],
@@ -52,8 +52,8 @@ if __name__ == '__main__':
             
         txt = list_csv[i]
         text = re.sub(r'^/home/mirco/octo_gps/Emilia/', '', txt)
-        wd = re.sub(r'\.csv\.gz$', '', text)
-        wd = wd+'.txt'
+        title_day = re.sub(r'\.csv\.gz$', '', text)
+        title_day = title_day +'.txt'
         
         df_list.columns = ['ts','uid','lat','lon','speed']
         df_list['user_progressive'] = 0  
@@ -96,19 +96,18 @@ if __name__ == '__main__':
                             dfj=[uid,df_traj.ts[0],df_traj.ts[len(df_traj)-1],dist,con ]
                             results.append(dfj)                        
                             
-                            with open('consumption_day.txt', 'a') as f:
-                                for line in results:
-                                    f.write(f"{line}\n")
+                            with open(title_day, 'a') as f:
+                                f.write(f"{dfj}\n")                                
                             f.close()
                             
-                            group_wayid = dfa.groupby('way_id',sort=False).agg({'emob_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()                        
+                            group_wayid = dfa.groupby('way_id',sort=False).agg({'j_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()                        
                             group_wayid['ts']=df_traj.ts[0]
                             group_wayid['distance'] = group_wayid['distance']/1000
                                                                             
                             wayids.append(group_wayid)
-                            
-                            with open('consumption_wayid.txt', 'a') as f:
-                                for line in wayids:
+                            ct='wayid-'+title_day
+                            with open(ct, 'a') as f:
+                                for line in group_wayid:
                                     f.write(f"{line}\n")
                             f.close()
                                                     
