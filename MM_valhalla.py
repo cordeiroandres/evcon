@@ -34,15 +34,14 @@ for i in range(len(lst_inter)-1):
         results.append(dfj)
         wayids.append(group_wayid) 
         c+=1
-        with open('lst_wayid.txt', 'a') as f:
+        with open('lst_wayid.txt', 'a') as f:            
             for line in wayids:
                 f.write(f"{line}\n")
         f.close()
 
-    with open('consumption_day.txt', 'a') as f:
-        for line in results:
-            f.write(f"{line}\n")
-    f.close()
+        with open('consumption_day.txt', 'a') as g:
+            g.write(f"{dfj}\n")        
+        g.close()
 
 lst_wi = pd.concat(wayids, ignore_index=True)     
 
