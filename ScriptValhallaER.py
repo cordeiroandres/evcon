@@ -11,6 +11,7 @@ import os
 import rasterio
 from pathlib import Path
 import time
+import re
 
 if __name__ == '__main__':
     #the maximum period of time (in seconds) between two consecutive points, otherwise the trajectory will be cut and another one will start
