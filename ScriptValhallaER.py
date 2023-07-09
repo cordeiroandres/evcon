@@ -47,7 +47,7 @@ if __name__ == '__main__':
                            parse_dates=[["DAY","HH24"]],
                            usecols=["ID_ANONYMOUS","DAY","HH24","LONGITUDE","LATITUDE","SPEED"])
         df_list = pd.DataFrame(data)
-        
+        c+=1
         if len(df_list) == 0:
             continue
             
@@ -65,6 +65,7 @@ if __name__ == '__main__':
         cb.srtm_assign(df_list)
         
         df = df_list.to_numpy()
+        print('df=',df.head(3))
         for row in df:   
             c+=1
             if c==4:
@@ -81,7 +82,8 @@ if __name__ == '__main__':
                 temporal_dist = (next_p[0]-p[0]).total_seconds()            
                 #calculates distance between two points        
                 spatial_dist = cb.spherical_distance(p[3],p[2],next_p[3],next_p[2])
-                
+                print(p[3],p[2],next_p[3],next_p[2])
+                print('dist=',spatial_dist)
                 if uid!=next_p[0]:
                     i = 1
                     uid = next_p[0]
@@ -92,7 +94,7 @@ if __name__ == '__main__':
                         
                         traj_new.extend(traj)                                            
                         
-                        col = ['ts','uid','lon','lat','speed','user_progressive']
+                        col = ['ts','uid','lat','lon','speed','user_progressive']
                         df_traj = pd.DataFrame(traj, columns=col)    
                         print(df_traj)
                         #dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
