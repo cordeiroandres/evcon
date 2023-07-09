@@ -99,7 +99,7 @@ if __name__ == '__main__':
                                     f.write(f"{line}\n")
                             f.close()
                             
-                            group_wayid = dfa.groupby('way_id',sort=False).agg({'emob_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()                        
+                            group_wayid = dfa.groupby('way_id',sort=False).agg({'j_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()                        
                             group_wayid['ts']=df_traj.ts[0]
                             group_wayid['distance'] = group_wayid['distance']/1000
                                                                             
