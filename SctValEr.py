@@ -133,13 +133,13 @@ if __name__ == '__main__':
                     else:                    
                         #insufficient number of points
                         traj=[]    
-                        next_p[5] = i                                                  
+                        #next_p[5] = i                                                  
                         traj.append(next_p)
                         p = next_p                 
                         continue        
                 
                 if spatial_dist > spatial_thr:                                                        
-                    next_p[5] = i
+                    #next_p[5] = i
                     p = next_p                
                     traj.append(p)  
         
