@@ -37,7 +37,7 @@ if __name__ == '__main__':
     traj = list()
     first_iteration = True  
     i = 1 
-    
+    c=0
     t0 = time.time()
     for i in range(len(list_csv)):
     #for dt in list_csv:        
@@ -48,7 +48,9 @@ if __name__ == '__main__':
         
         if len(df_list) == 0:
             continue
-        
+        if c>0:
+            break
+        c+=1
         txt = list_csv[i]
         text = re.sub(r'^/home/mirco/octo_gps/Emilia/', '', txt)
         title_day = re.sub(r'\.csv\.gz$', '', text)
@@ -56,7 +58,7 @@ if __name__ == '__main__':
         print(title_day)
         
         df_list.columns = ['ts','uid','lat','lon','speed']
-        df_list['user_progressive'] = 0  
+        #df_list['user_progressive'] = 0  
         df_list['lon'] = df_list['lon']/ 10**6
         df_list['lat'] = df_list['lat']/ 10**6
         
@@ -66,32 +68,36 @@ if __name__ == '__main__':
         for row in df:                
             next_p = row        
             if first_iteration:
-                uid = row[1]            
+                #uid = row[1]            
                 p = row
-                p[5] = i
+                #p[5] = i
                 traj = [p]              
                 first_iteration = False 
             else: 
                 #calculates the time difference 
                 temporal_dist = (next_p[0]-p[0]).total_seconds()            
+                print('temp_dist=',temporal_dist,'next_p',next_p[0],'p',p[0])
                 #calculates distance between two points        
                 spatial_dist = cb.spherical_distance(p[2],p[3],next_p[2],next_p[3])
                 
-                if uid!=next_p[0]:
-                    i = 1
-                    uid = next_p[0]
-                    
+                #if uid!=next_p[0]:
+                    #i = 1
+                    #uid = next_p[0]                
                 if temporal_dist > temporal_thr:                                    
-                    if len(traj) >= minpoints:                      
+                    if len(traj) >= minpoints:                                   
                         traj_new.extend(traj)                                            
-                        
+                        if c==15:
+                            break
                         col = ['ts','uid','lat','lon','speed','user_progressive']
-                        df_traj = pd.DataFrame(traj, columns=col)                                                             
+                        df_traj = pd.DataFrame(traj, columns=col)     
+                        print(df_traj)
+                        
                         dfa = cb.MapMatching_traj(df_traj)                               
                         if len(dfa) > 0:
+                            c+=1
                             dist = dfa['distance'].sum()/1000
                             con = dfa['j_con'].sum()
-                            dfj=[uid,df_traj.ts[0],df_traj.ts[len(df_traj)-1],dist,con ]
+                            dfj=[df_traj.uid[0],df_traj.ts[0],df_traj.ts[len(df_traj)-1],dist,con ]
                             results.append(dfj)
                                                                             
                             with open('consumption_day.txt', 'a') as f:
@@ -112,9 +118,9 @@ if __name__ == '__main__':
                             f.close()
                             
                             traj=[]                                         
-                            uid = traj_new[-1][1]                     
-                            if uid==next_p[1]:
-                                i += 1                                      
+                            #uid = traj_new[-1][1]                     
+                            #if uid==next_p[1]:
+                             #   i += 1                                      
                             next_p[5] = i
                             p = next_p 
                             traj.append(p) 
