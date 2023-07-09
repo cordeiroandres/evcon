@@ -55,6 +55,7 @@ if __name__ == '__main__':
         text = re.sub(r'^/home/mirco/octo_gps/Emilia/', '', txt)
         title_day = re.sub(r'\.csv\.gz$', '', text)
         title_day = title_day +'.txt'
+        print(title_day)
         
         df_list.columns = ['ts','uid','lat','lon','speed']
         df_list['user_progressive'] = 0  
@@ -93,6 +94,7 @@ if __name__ == '__main__':
                         df_traj = pd.DataFrame(traj, columns=col)                                                             
                         #dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
                         dfa = cb.MapMatching_traj(df_traj)
+                        print(dfa)
                         if len(dfa) > 0:
                             dist = dfa['distance'].sum()/1000
                             con = dfa['j_con'].sum()
@@ -113,6 +115,7 @@ if __name__ == '__main__':
                                 for line in group_wayid:
                                     f.write(f"{line}\n")
                             f.close()
+                            break
                                                     
                         traj=[]                                         
                         uid = traj_new[-1][1]                     
