@@ -87,14 +87,15 @@ if __name__ == '__main__':
                     uid = next_p[0]
                     
                 if temporal_dist > temporal_thr:                                    
-                    if len(traj) >= minpoints:                      
+                    if len(traj) >= minpoints:  
+                        print(len(traj))
                         traj_new.extend(traj)                                            
                         
                         col = ['ts','uid','lon','lat','speed','user_progressive']
                         df_traj = pd.DataFrame(traj, columns=col)                                                             
                         #dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
                         dfa = cb.MapMatching_traj(df_traj)
-                        print(dfa)
+                        print(len(dfa))
                         if len(dfa) > 0:
                             dist = dfa['distance'].sum()/1000
                             con = dfa['j_con'].sum()
