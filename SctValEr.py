@@ -121,9 +121,14 @@ if __name__ == '__main__':
                             #uid = traj_new[-1][1]                     
                             #if uid==next_p[1]:
                              #   i += 1                                      
-                            next_p[5] = i
+                            #next_p[5] = i
                             p = next_p 
                             traj.append(p) 
+                            continue
+                        else:
+                            traj=[]
+                            p = next_p
+                            traj.append(p)
                             continue
                     else:                    
                         #insufficient number of points
