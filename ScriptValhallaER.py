@@ -93,10 +93,12 @@ if __name__ == '__main__':
                         traj_new.extend(traj)                                            
                         
                         col = ['ts','uid','lon','lat','speed','user_progressive']
-                        df_traj = pd.DataFrame(traj, columns=col)                                                             
+                        df_traj = pd.DataFrame(traj, columns=col)    
+                        print(df_traj)
                         #dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
                         dfa = cb.MapMatching_traj(df_traj)
                         print(len(dfa))                        
+                        break
                         c+=1
                         if c==8:
                             break
