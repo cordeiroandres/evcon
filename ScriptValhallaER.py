@@ -78,7 +78,7 @@ if __name__ == '__main__':
                 #calculates the time difference 
                 temporal_dist = (next_p[0]-p[0]).total_seconds()            
                 #calculates distance between two points        
-                spatial_dist = cb.spherical_distance(p[3],p[2],next_p[3],next_p[2])
+                spatial_dist = cb.spherical_distance(p[2],p[3],next_p[2],next_p[3])
                 print(p[3],p[2],next_p[3],next_p[2])
                 print('dist=',spatial_dist)
                 if uid!=next_p[0]:
