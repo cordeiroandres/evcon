@@ -62,10 +62,7 @@ if __name__ == '__main__':
         
         cb.srtm_assign(df_list)
         
-        df = df_list.to_numpy()  
-        print(df[0])
-        break
-        """
+        df = df_list.to_numpy()
         for row in df:                       
             next_p = row        
             if first_iteration:
@@ -79,8 +76,7 @@ if __name__ == '__main__':
                 temporal_dist = (next_p[0]-p[0]).total_seconds()            
                 #calculates distance between two points        
                 spatial_dist = cb.spherical_distance(p[2],p[3],next_p[2],next_p[3])
-                print(p[3],p[2],next_p[3],next_p[2])
-                print('dist=',spatial_dist)
+
                 if uid!=next_p[0]:
                     i = 1
                     uid = next_p[0]
@@ -92,8 +88,7 @@ if __name__ == '__main__':
                         traj_new.extend(traj)                                            
                         
                         col = ['ts','uid','lat','lon','speed','user_progressive']
-                        df_traj = pd.DataFrame(traj, columns=col)    
-                        print(df_traj)
+                        df_traj = pd.DataFrame(traj, columns=col)
                         #dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
                         dfa = cb.MapMatching_traj(df_traj)
                         print(len(dfa))                                                
@@ -118,23 +113,23 @@ if __name__ == '__main__':
                                 for line in group_wayid:
                                     f.write(f"{line}\n")
                             f.close()
-                            break
+                            
                                                     
-                        traj=[]                                         
-                        uid = traj_new[-1][1]                     
-                        if uid==next_p[1]:
-                            i += 1                                      
-                            next_p[5] = i
-                            p = next_p 
-                            traj.append(p) 
-                            continue
-                        else:                    
-                            #insufficient number of points
-                            traj=[]    
-                            next_p[5] = i                                                  
-                            traj.append(next_p)
-                            p = next_p                 
-                            continue        
+                    traj=[]                                         
+                    uid = traj_new[-1][1]                     
+                    if uid==next_p[1]:
+                        i += 1                                      
+                        next_p[5] = i
+                        p = next_p 
+                        traj.append(p) 
+                        continue
+                    else:                    
+                        #insufficient number of points
+                        traj=[]    
+                        next_p[5] = i                                                  
+                        traj.append(next_p)
+                        p = next_p                 
+                        continue        
                     
                 if spatial_dist > spatial_thr:                                                        
                     next_p[5] = i
@@ -147,4 +142,3 @@ if __name__ == '__main__':
         f.write("total time:")
         f.write(f"{t}\n ")
     f.close()
-    """
