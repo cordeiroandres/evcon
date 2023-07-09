@@ -106,7 +106,7 @@ if __name__ == '__main__':
                             wayids.append(group_wayid)
     
                             ct='wayid-'+title_day
-                            list_wi = pd.concant(wayids, ignore_index=True)
+                            list_wi = pd.concat(wayids, ignore_index=True)
                             list_wi.to_csv(ct, index=False, header=False, mode='a', sep='\t')
 
                             
