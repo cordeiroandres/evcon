@@ -86,7 +86,7 @@ if __name__ == '__main__':
                         traj_new.extend(traj)                                                                                            
                         col = ['ts','uid','lat','lon','speed','user_progressive']
                         df_traj = pd.DataFrame(traj, columns=col)     
-                        print(df_traj)
+                        #print(df_traj)
                         
                         dfa = cb.MapMatching_traj(df_traj)                               
                         if len(dfa) > 0:                            
