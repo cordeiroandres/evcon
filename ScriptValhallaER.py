@@ -83,7 +83,7 @@ if __name__ == '__main__':
                     
                 if temporal_dist > temporal_thr:                                    
                     if len(traj) >= minpoints:  
-                        print(len(traj))
+                        print(traj)
                         
                         traj_new.extend(traj)                                            
                         
