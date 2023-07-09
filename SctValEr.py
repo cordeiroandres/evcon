@@ -83,9 +83,7 @@ if __name__ == '__main__':
                     #uid = next_p[0]                
                 if temporal_dist > temporal_thr:                                    
                     if len(traj) >= minpoints:                                   
-                        traj_new.extend(traj)                                            
-                        if c==15:
-                            break
+                        traj_new.extend(traj)                                                                                            
                         col = ['ts','uid','lat','lon','speed','user_progressive']
                         df_traj = pd.DataFrame(traj, columns=col)     
                         print(df_traj)
