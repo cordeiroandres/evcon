@@ -75,7 +75,7 @@ if __name__ == '__main__':
                 first_iteration = False 
             else: 
                 #calculates the time difference 
-                temporal_dist = (next_p[0]-p[0]).total_seconds()            
+                temporal_dist = abs ((next_p[0]-p[0]).total_seconds())
                 print('temp_dist=',temporal_dist,'next_p',next_p[0],'p',p[0])
                 #calculates distance between two points        
                 spatial_dist = cb.spherical_distance(p[2],p[3],next_p[2],next_p[3])
