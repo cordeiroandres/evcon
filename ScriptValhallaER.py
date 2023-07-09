@@ -41,7 +41,7 @@ if __name__ == '__main__':
     c=0
     for i in range(len(list_csv)):
     #for dt in list_csv:   
-        if c==2:
+        if c==4:
             break
         data = pd.read_csv(list_csv[i],dtype={"ID_ANONYMOUS": np.int64 ,"LONGITUDE": np.float32,"LATITUDE": np.float32,"SPEED": np.float16},
                            parse_dates=[["DAY","HH24"]],
@@ -89,13 +89,17 @@ if __name__ == '__main__':
                 if temporal_dist > temporal_thr:                                    
                     if len(traj) >= minpoints:  
                         print(len(traj))
+                        
                         traj_new.extend(traj)                                            
                         
                         col = ['ts','uid','lon','lat','speed','user_progressive']
                         df_traj = pd.DataFrame(traj, columns=col)                                                             
                         #dfa=[uid,df_traj.ts[0],df_traj.lon[0], df_traj.lat[0], df_traj.ts[len(df_traj)-1], len(df_traj), df_traj.lon[len(df_traj)-1], df_traj.lat[len(df_traj)-1] ]
                         dfa = cb.MapMatching_traj(df_traj)
-                        print(len(dfa))
+                        print(len(dfa))                        
+                        c+=1
+                        if c==8:
+                            break
                         if len(dfa) > 0:
                             dist = dfa['distance'].sum()/1000
                             con = dfa['j_con'].sum()
