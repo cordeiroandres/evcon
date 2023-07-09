@@ -64,12 +64,8 @@ if __name__ == '__main__':
         
         cb.srtm_assign(df_list)
         
-        df = df_list.to_numpy()
-        print('df=',df.head(3))
-        for row in df:   
-            c+=1
-            if c==4:
-                break
+        df = df_list.to_numpy()        
+        for row in df:                       
             next_p = row        
             if first_iteration:
                 uid = row[1]            
