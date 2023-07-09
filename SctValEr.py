@@ -36,11 +36,9 @@ if __name__ == '__main__':
     traj_new = list()    
     traj = list()
     first_iteration = True  
-    i = 1 
-    c=0
+    #i = 1     
     t0 = time.time()
-    for i in range(len(list_csv)):
-    #for dt in list_csv:        
+    for i in range(len(list_csv)):    
         data = pd.read_csv(list_csv[i],dtype={"ID_ANONYMOUS": np.int64 ,"LONGITUDE": np.float32,"LATITUDE": np.float32,"SPEED": np.float16},
                            parse_dates=[["DAY","HH24"]],
                            usecols=["ID_ANONYMOUS","DAY","HH24","LONGITUDE","LATITUDE","SPEED"])
@@ -48,9 +46,10 @@ if __name__ == '__main__':
         
         if len(df_list) == 0:
             continue
-        if c>0:
+        
+        if i>30:
             break
-        c+=1
+        
         txt = list_csv[i]
         text = re.sub(r'^/home/mirco/octo_gps/Emilia/', '', txt)
         title_day = re.sub(r'\.csv\.gz$', '', text)
@@ -58,7 +57,7 @@ if __name__ == '__main__':
         print(title_day)
         
         df_list.columns = ['ts','uid','lat','lon','speed']
-        #df_list['user_progressive'] = 0  
+        df_list['user_progressive'] = 0  
         df_list['lon'] = df_list['lon']/ 10**6
         df_list['lat'] = df_list['lat']/ 10**6
         
@@ -75,8 +74,7 @@ if __name__ == '__main__':
                 first_iteration = False 
             else: 
                 #calculates the time difference 
-                temporal_dist = abs ((next_p[0]-p[0]).total_seconds())
-                print('temp_dist=',temporal_dist,'next_p',next_p[0],'p',p[0])
+                temporal_dist = abs ((next_p[0]-p[0]).total_seconds())                
                 #calculates distance between two points        
                 spatial_dist = cb.spherical_distance(p[2],p[3],next_p[2],next_p[3])
                 
@@ -93,16 +91,14 @@ if __name__ == '__main__':
                         print(df_traj)
                         
                         dfa = cb.MapMatching_traj(df_traj)                               
-                        if len(dfa) > 0:
-                            c+=1
+                        if len(dfa) > 0:                            
                             dist = dfa['distance'].sum()/1000
                             con = dfa['j_con'].sum()
                             dfj=[df_traj.uid[0],df_traj.ts[0],df_traj.ts[len(df_traj)-1],dist,con ]
                             results.append(dfj)
-                                                                            
-                            with open('consumption_day.txt', 'a') as f:
-                                for line in results:
-                                    f.write(f"{line}\n")
+                            cd = 'traj-' + title_day                                                
+                            with open(cd, 'a') as f:                                
+                                f.write(f"{dfj}\n")
                             f.close()
                             
                             group_wayid = dfa.groupby('way_id',sort=False).agg({'j_con': 'sum','distance':'sum','ts_dif':'sum'}).reset_index()                        
@@ -112,10 +108,9 @@ if __name__ == '__main__':
                             wayids.append(group_wayid)
     
                             ct='wayid-'+title_day
-                            with open(ct, 'a') as f:
-                                for line in wayids:
-                                    f.write(f"{line}\n")
-                            f.close()
+                            list_wi = pd.concant(wayids, ignore_index=True)
+                            list_wi.to_csv(ct, index=False, header=False, mode='a', sep='\t')
+
                             
                             traj=[]                                         
                             #uid = traj_new[-1][1]                     
