@@ -51,9 +51,6 @@ if __name__ == '__main__':
         if len(df_list) == 0:
             continue
         
-        if i>30:
-            break
-        
         txt = list_csv[i]
         text = re.sub(r'^/home/mirco/octo_gps/Emilia/', '', txt)
         title_day = re.sub(r'\.csv\.gz$', '', text)
